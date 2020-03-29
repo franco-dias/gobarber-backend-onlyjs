@@ -27,13 +27,14 @@ class SessionController {
       return res.status(400).json({ error: 'Incorrect password.' });
     }
 
-    const { id, name } = user;
+    const { id, name, provider } = user;
 
     return res.json({
       user: {
         id,
         name,
         email,
+        provider,
       },
       // payload, segredo, e tempo de expiração
       token: jwt.sign({ id }, authConfig.secret, {

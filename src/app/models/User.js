@@ -3,7 +3,6 @@ import bcrypt from 'bcryptjs';
 
 class User extends Model {
   // o parâmetro sequelize é o objeto de conexão
-
   // os campos dentro do model não precisam ser exatamente iguais aos do banco
   static init(sequelize) {
     super.init(
@@ -31,7 +30,7 @@ class User extends Model {
 
   // cria relacionamentos entre os models
   static associate(models) {
-    this.belongsTo(models.File, { foreignKey: 'avatar_id' });
+    this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
   }
 
   checkPassword(password) {
