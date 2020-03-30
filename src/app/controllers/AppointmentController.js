@@ -6,6 +6,9 @@ import Appointment from '../models/Appointment';
 import User from '../models/User';
 import File from '../models/File';
 
+import CancellationMail from '../jobs/CancellationMail';
+import Queue from '../../lib/Queue';
+
 import Notification from '../schemas/Notification';
 
 class AppointmentController {
@@ -13,7 +16,14 @@ class AppointmentController {
     const { page = 1 } = req.query;
     const appointments = await Appointment.findAll({
       where: { user_id: req.userId, canceled_at: null },
-      attributes: ['id', 'date', 'canceled_at', 'provider_id'],
+      attributes: [
+        'id',
+        'date',
+        'canceled_at',
+        'provider_id',
+        'past',
+        'cancelable',
+      ],
       order: ['date'],
       limit: 20,
       offset: (page - 1) * 20,
@@ -104,7 +114,24 @@ class AppointmentController {
   }
 
   async delete(req, res) {
-    const appointment = await Appointment.findByPk(req.params.id);
+    const appointment = await Appointment.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'provider',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name'],
+        },
+      ],
+    });
+
+    if (!appointment) {
+      return res.status(400).json({ error: 'Appointment does not exist.' });
+    }
 
     if (appointment.user_id !== req.userId) {
       return res.status(401).json({
@@ -123,6 +150,10 @@ class AppointmentController {
     appointment.canceled_at = new Date();
 
     await appointment.save();
+
+    await Queue.add(CancellationMail.key, {
+      appointment,
+    });
 
     return res.json(appointment);
   }
