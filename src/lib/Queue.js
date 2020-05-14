@@ -1,6 +1,6 @@
 import Bee from 'bee-queue';
 
-import CancellationMail from '../app/jobs/CancellationMail';
+import CancellationMail from '../app/jobs/CancelationMail';
 import redisConfig from '../config/redis';
 
 const jobs = [CancellationMail];

@@ -6,7 +6,7 @@ import Appointment from '../models/Appointment';
 import User from '../models/User';
 import File from '../models/File';
 
-import CancellationMail from '../jobs/CancellationMail';
+import CancelationMail from '../jobs/CancelationMail';
 import Queue from '../../lib/Queue';
 
 import Notification from '../schemas/Notification';
@@ -151,7 +151,7 @@ class AppointmentController {
 
     await appointment.save();
 
-    await Queue.add(CancellationMail.key, {
+    await Queue.add(CancelationMail.key, {
       appointment,
     });
 

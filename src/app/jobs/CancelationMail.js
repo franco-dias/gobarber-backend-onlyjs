@@ -3,9 +3,9 @@ import pt from 'date-fns/locale/pt';
 
 import Mail from '../../lib/Mail';
 
-class CancellationMail {
+class CancelationMail {
   get key() {
-    return 'CancellationMail';
+    return 'CancelationMail';
   }
 
   async handle({ data }) {
@@ -29,6 +29,6 @@ class CancellationMail {
   }
 }
 
-export default new CancellationMail();
+export default new CancelationMail();
 
 // import CancelationMail - cancelationMail.key,
